@@ -1,0 +1,115 @@
+﻿@using RestroManagement.Models.Domain
+@model IEnumerable<Inventory>?
+
+
+
+
+<div class="row g-0 rounded-3 overflow-hidden mt-4">
+    <div class="col-md-4">
+        <div class="card m-1 rounded-4 border-0 shadow-sm">
+            <div class="card-header" style="background-color:#F8B259;">
+                <b>Total Inventory Items</b>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">@ViewBag.TotalCount</h5>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card m-1 rounded-4 border-0 shadow-sm">
+            <div class="card-header" style="background-color:#F8B259;">
+                <b>Low Inventory Items</b>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">@ViewBag.LowStockCount</h5>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card m-1 rounded-4 border-0 shadow-sm">
+            <div class="card-header" style="background-color:#F8B259;">
+               <b>Total Stock Value</b>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">@((decimal)(ViewBag.TotalStockValue ?? 0m))</h5>
+            </div>
+        </div>
+    </div>
+    
+
+ </div>
+
+
+
+<div class="card border-0 shadow-sm rounded-4 mt-4">
+    <div class="d-flex align-items-center justify-content-between mt-2 mb-3">
+        <h4 class="font-weight-bold m-1 p-1" style="color:#C75D2C;">Inventory List</h4>
+        <a asp-action="Create" class="btn btn-primary p-1 m-1">Create New Inventory</a>
+    </div>
+<div class="table-responsive">
+<table class="table table-hover align-middle mb-0">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Buying Price</th>
+            <th>Quantity</th>
+            <th>Unit</th>
+            <th>Threshold Value</th>
+            <th>Expiry Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.BuyingPrice.ToString("C")</td>
+                <td>
+                    @item.Quantity
+                    @if (item.Quantity <= item.ThresholdValue)
+                    {
+                        <span class="badge bg-warning ms-1">Low</span>
+                    }
+                </td>
+                <td>@item.Unit</td>
+                <td>@item.ThresholdValue</td>
+                <td>@item.ExpiryDate.ToShortDateString()</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-secondary">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+ </div>
+</div>
+
+@{
+    var page = (int)(ViewBag.CurrentPage ?? 1);
+    var total = (int)(ViewBag.TotalCount ?? 0);
+    var pageSize = 10;
+    var start = total == 0 ? 0 : ((page - 1) * pageSize) + 1;
+    var end = Math.Min(page * pageSize, total);
+}
+
+<nav aria-label="Inventory pagination" class="mt-3 d-flex align-items-center justify-content-between">
+    <span class="text-muted">Showing @start–@end of @ViewBag.TotalCount items</span>
+    <ul class="pagination">
+        <li class="page-item @(ViewBag.CurrentPage > 1 ? "" : "disabled")">
+            <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage - 1)">Previous</a>
+        </li>
+        @for (int i = 1; i <= (int)(ViewBag.TotalPages ?? 1); i++)
+        {
+            <li class="page-item @(i == (int)ViewBag.CurrentPage ? "active" : "")">
+                <a class="page-link" asp-action="Index" asp-route-page="@i">@i</a>
+            </li>
+        }
+        <li class="page-item @(ViewBag.CurrentPage < ViewBag.TotalPages ? "" : "disabled")">
+            <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage + 1)">Next</a>
+        </li>
+    </ul>
+</nav>

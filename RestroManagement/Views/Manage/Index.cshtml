@@ -1,0 +1,84 @@
+﻿@using RestroManagement.Models.Domain
+@model IEnumerable<Category>
+@{
+    ViewBag.Title = "Manage";
+}
+
+<style>
+    .fixed-table {
+        table-layout: fixed; /* force equal-width columns */
+    }
+
+        .fixed-table th,
+        .fixed-table td {
+            width: 33.33%; /* 3 equal columns */
+        }
+</style>
+
+<div class="row mt-3">
+    <div class="col">
+        <div class="d-flex justify-content-between m-1 p-1" >
+            <h4 class="font-weight-bold m-1 p-1" style="color:#C75D2C;">Manage Categories</h4>
+
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#categoryModal">
+                Create New Category
+            </button>
+        </div>
+
+        <table class="table table-hover align-middle border-0 shadow-lg m-1 p-1 w-100"
+               style="table-layout: fixed;background-color:#ffffff; border-radius:10px;">
+                <thead>
+                    <tr>
+                        <th style="width: 33%;">Id</th>
+                    <th style="width: 33%;">Name</th>
+                    <th style="width: 33%;">Total Products</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var category in Model)
+                    {
+                        <tr>
+                            <td>@category.Id</td>
+                            <td>@category.Name</td>
+                            <td>@category.Products.Count()</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        
+    </div>
+    <div class="col">
+
+    </div> 
+</div>
+
+<div class="modal fade fixed top-0 left-0 w-full h-full outline-none hidden overflow-x-hidden overflow-y-auto" 
+    id="categoryModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Create Category</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="CreateCategory" method="post">
+                <div class="modal-body">
+                    <label accesskey="" for="Name" class="form-label">Category Name</label>
+                    <input type="text" class="form-control" id="Name" name="Name" required placeholder="Enter category name">
+                    <div class="form-text">Do Not Enter Category liKe 'Veg Meal' use Veg_Meal</div>
+
+                    <label accesskey="" for="Description" class="form-label mt-2">Description</label>
+                    <textarea class="form-control" id="Description" name="Description" rows="3" placeholder="Enter category description"></textarea>
+                    <div class="form-text">You can provide a brief description of the category.</div>
+                                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>

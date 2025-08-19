@@ -1,0 +1,241 @@
+﻿@using RestroManagement.Models.ViewModels
+@model MenuViewModel
+@{
+    ViewBag.Title = "Veg Menu";
+    var firstCategory = (Model.Categories ?? new List<RestroManagement.Models.Domain.Category>()).FirstOrDefault();
+    ViewData["BodyClass"] = "theme-modern menu-theme";
+}
+@Html.AntiForgeryToken()
+<div class="container">
+    <div class="row">
+        <div class="col-12 col-lg-8 border-rounded">
+            <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                @if (Model.Categories != null && Model.Categories.Any())
+                {
+                    foreach (var category in Model.Categories)
+                    {
+                        var isActive = category == firstCategory ? "active" : "";
+                        var isSelected = category == firstCategory ? "true" : "false";
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link @isActive" id="pills-@category.Name-tab" data-bs-toggle="pill"
+                                    data-bs-target="#pills-@category.Name" type="button" role="tab" aria-controls="pills-@category.Name"
+                                    aria-selected="@isSelected">
+                                @category.Name
+                            </button>
+                        </li>
+                    }
+                }
+            </ul>
+            <div class="tab-content" id="pills-tabContent">
+                @if (Model.Categories != null && Model.Categories.Any())
+                {
+                    foreach (var category in Model.Categories)
+                    {
+                        var isActive = category == firstCategory ? "show active" : "";
+                        <div class="tab-pane fade @isActive" id="pills-@category.Name" role="tabpanel"
+                             aria-labelledby="pills-@category.Name-tab" tabindex="0">
+                            @if (category.Products != null && category.Products.Any())
+                            {
+                                <div class="row g-2">
+                                @foreach (var product in category.Products)
+                                {
+                                    var available = Model.AvailableByProductId.ContainsKey(product.Id) ? Model.AvailableByProductId[product.Id] : 0;
+                                    <div class="col-6 col-md-6 col-lg-4">
+                                        <div class="card product-card mb-2">
+                                            <div class="card-body p-2">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div>
+                                                        <div class="card-title h6 mb-1">@product.Name</div>
+                                                        <div class="card-text text-muted small">@product.Price.ToString("C")</div>
+                                                        <span class="available-label small @(available <= 0 ? "text-danger" : "text-muted")" data-product-id="@product.Id" data-initial-available="@available">
+                                                            @(available <= 0 ? "Out of stock" : $"Available: {available}")
+                                                        </span>
+                                                    </div>
+                                                    <div>
+                                                        <button class="btn btn-primary btn-sm add-to-order"
+                                                                data-product-id="@product.Id"
+                                                                data-product-name="@product.Name"
+                                                                data-product-price="@product.Price"
+                                                                data-product-available="@available"
+                                                                @(available <= 0 ? "disabled" : null)>
+                                                            Add
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                </div>
+                            }
+                            else
+                            {
+                                <p>No Products in this Category</p>
+                            }
+                        </div>
+                    }
+                }
+
+
+
+
+
+            </div>
+        </div>
+        <div class="col-12 col-lg-4">
+            <h2>Order Items</h2>
+            <ul id="order-items" class="list-group mb-2"></ul>
+            <div>
+                <strong>Total Amount:</strong> <span id="order-total">0</span>
+            </div>
+            <button id="submit-order" class="btn btn-success mt-2" type="button">Submit Order</button>
+            <div id="order-message" class="mt-2"></div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        const availabilityByProductId = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AvailableByProductId));
+        const orderItems = [];
+        const orderList = document.getElementById('order-items');
+        const orderTotal = document.getElementById('order-total');
+        
+        function getQuantityInOrder(productId) {
+            const item = orderItems.find(i => i.id === productId);
+            return item ? item.quantity : 0;
+        }
+
+        function updateAvailabilityUI() {
+            // Update labels and add buttons based on remaining availability after items in cart
+            for (const key in availabilityByProductId) {
+                const productId = key;
+                const initial = availabilityByProductId[productId] || 0;
+                const inCart = getQuantityInOrder(productId);
+                const remaining = Math.max(initial - inCart, 0);
+
+                const label = document.querySelector(`.available-label[data-product-id="${productId}"]`);
+                if (label) {
+                    if (remaining <= 0) {
+                        label.textContent = 'Out of stock';
+                        label.classList.add('text-danger');
+                        label.classList.remove('text-muted');
+                    } else {
+                        label.textContent = `Available: ${remaining}`;
+                        label.classList.remove('text-danger');
+                        label.classList.add('text-muted');
+                    }
+                }
+
+                const addBtn = document.querySelector(`.add-to-order[data-product-id="${productId}"]`);
+                if (addBtn) {
+                    addBtn.disabled = remaining <= 0;
+                }
+            }
+        }
+
+        document.addEventListener('click', function(e){
+                //Add to Order button click handler
+            if(e.target && e.target.classList.contains('add-to-order'))
+            {
+                const id = e.target.getAttribute('data-product-id');
+                const name = e.target.getAttribute('data-product-name');
+                const price = parseFloat(e.target.getAttribute('data-product-price'));
+                const maxAvailable = parseInt(e.target.getAttribute('data-product-available')) || 0;
+
+                    let item = orderItems.find(item => item.id === id);
+                        if(item){
+                                if(item.quantity < maxAvailable) {
+                                    item.quantity++;
+                                }
+                        }
+                        else{
+                            if(maxAvailable <= 0) return;
+                            item = { id, name, price, quantity: 1, maxAvailable };
+                            orderItems.push(item);
+                            }
+                    renderOrder();
+            }
+
+            // Increase Quantity
+            if(e.target && e.target.classList.contains('increase-quantity')) {
+                const id = e.target.getAttribute('data-product-id');
+                const item = orderItems.find(item => item.id === id);
+                if(item) {
+                    const max = item.maxAvailable ?? (availabilityByProductId[id] || 0);
+                    if(item.quantity < max) {
+                        item.quantity++;
+                    }
+                    renderOrder();
+                }
+            }
+
+            // Decrease Quantity
+                 if(e.target && e.target.classList.contains('decrease-quantity')) {
+                    const id = e.target.getAttribute('data-product-id');
+                    let item = orderItems.find(item => item.id === id);
+                    if(item) {
+                        item.quantity--;
+                        if(item.quantity <= 0) {
+                            // Remove item from order
+                            const idx = orderItems.findIndex(i => i.id === id);
+                            if(idx > -1) orderItems.splice(idx, 1);
+                        }
+                        renderOrder();
+                    }
+                }
+
+        });
+
+        function renderOrder() {
+                orderList.innerHTML = '';
+                let total = 0;
+                orderItems.forEach(item => {
+                    total += item.price * item.quantity;
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                    li.innerHTML = `
+                        <span>
+                            ${item.name}
+                            <button class="btn btn-sm btn-light increase-quantity" data-product-id="${item.id}" ${item.quantity >= (item.maxAvailable ?? (availabilityByProductId[item.id] || 0)) ? 'disabled' : ''}>+</button>
+                            <span class="mx-2">${item.quantity}</span>
+                            <button class="btn btn-sm btn-light decrease-quantity" data-product-id="${item.id}">-</button>
+                        </span>
+                        <span>$${(item.price * item.quantity).toFixed(2)}</span>
+                    `;
+                    orderList.appendChild(li);
+                });
+                orderTotal.textContent = total.toFixed(2);
+                updateAvailabilityUI();
+            }
+
+            document.getElementById('submit-order').addEventListener('click', function() {
+                if (orderItems.length === 0) {
+                    document.getElementById('order-message').textContent = "Order is empty.";
+                    return;
+                }
+
+                fetch('/Menu/SubmitOrder', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value // for anti-forgery
+                    },
+                    body: JSON.stringify(orderItems)
+                })
+                .then(response => response.ok ? response.json() : Promise.reject(response))
+                .then(data => {
+                    document.getElementById('order-message').textContent = "Order submitted successfully!";
+                    orderItems.length = 0;
+                    renderOrder();
+                })
+                .catch(error => {
+                    document.getElementById('order-message').textContent = "Failed to submit order.";
+                });
+            });
+
+            // Initialize labels/buttons on load
+            updateAvailabilityUI();
+    </script>
+}

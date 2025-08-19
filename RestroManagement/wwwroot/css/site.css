@@ -1,0 +1,325 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem rgba(var(--brand-primary-rgb), 0.35);
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+/*body {
+  margin-bottom: 60px;
+}*/
+
+/* ===== Menu page enhancements ===== */
+
+/* Rounded bordered panel used on the left column */
+.border-rounded {
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  padding: 16px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+/* Pills (category tabs) */
+#pills-tab .nav-link {
+  border-radius: 999px;
+  color: #495057;
+  background-color: #f8f9fa;
+  margin-right: 8px;
+  transition: all .2s ease;
+}
+
+#pills-tab .nav-link:hover {
+  background-color: #eef2f7;
+}
+
+#pills-tab .nav-link.active {
+  color: #fff;
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-primary-600));
+  box-shadow: 0 2px 10px rgba(var(--brand-primary-rgb), 0.25);
+}
+
+/* Cards inside menu tab panes */
+#pills-tabContent .card {
+  border: 1px solid #edf2f7;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+#pills-tabContent .card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+#pills-tabContent .card .card-title {
+  font-weight: 600;
+  margin-bottom: .25rem;
+}
+
+/* Smaller product cards on menu */
+.product-card {
+  border: 1px solid #edf2f7;
+  border-radius: 12px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+}
+
+.product-card .card-title {
+  font-size: .95rem;
+}
+
+.product-card .card-text,
+.product-card .available-label {
+  font-size: .8rem;
+}
+
+/* Availability label */
+.available-label {
+  font-size: 0.92rem;
+}
+
+.available-label.text-danger {
+  color: #dc3545 !important;
+}
+
+/* Add to order button */
+.add-to-order {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: transform .12s ease, box-shadow .12s ease, opacity .12s ease;
+}
+
+.add-to-order:hover:not([disabled]) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+.add-to-order[disabled] {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+/* Order items panel */
+#order-items .list-group-item {
+  border: 1px solid #edf2f7;
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+
+#order-items .btn-light {
+  border: 1px solid #dee2e6;
+}
+
+/* Order items styling to align with product cards */
+#order-items .list-group-item {
+  background-color: #ffffff;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+}
+
+#order-total {
+  font-weight: 700;
+}
+
+/* Consistent sizing for metric cards across pages */
+.metric-card .card-body {
+  min-height: 110px;
+}
+
+/* Orders view: stretch metrics and larger values */
+.orders-metrics-row .orders-metric .metric-value {
+  font-size: 2.25rem; /* larger than display-6 but less than display-4 */
+  font-weight: 700;
+}
+
+.orders-metrics-row .orders-metric .metric-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+}
+
+.orders-metrics-row .orders-metric .card-body {
+  padding: 20px;
+}
+
+/* Menu view: force equal card sizes in grid */
+.menu-theme .product-card {
+  height: 100%;
+}
+
+.menu-theme .product-card .card-body {
+  min-height: 110px;
+  display: flex;
+  align-items: stretch;
+}
+
+/* Inventory view: metrics should fill row and be equal height */
+.inventory-metrics-row .inventory-metric .card-body {
+  min-height: 110px;
+}
+
+/* ===== Global Theme (applies to all pages) ===== */
+:root {
+  /* App color palette (user-defined) */
+  --brand-primary: #D96F32;      /* Primary */
+  --brand-primary-600: #C75D2C;  /* Primary darker */
+  --brand-accent: #F8B259;       /* Accent */
+  --brand-bg: #F3E9DC;           /* Background */
+  --brand-surface: #ffffff;      /* Surface */
+  --brand-border: #e5e7eb;       /* Neutral border */
+  --brand-muted: #6b7280;        /* Neutral text */
+
+  /* Helper for translucent rings */
+  --brand-primary-rgb: 217, 111, 50; /* #D96F32 */
+  --brand-selected-bg: #f6efe6;  /* subtle selected row bg */
+}
+
+.theme-modern {
+  background-color: var(--brand-bg);
+}
+
+.app-shell {
+  background: linear-gradient(180deg, #fbfbfd 0%, #f7f8fc 60%, #f4f7ff 100%);
+}
+
+.sidebar-modern {
+  background-color: var(--brand-surface) !important;
+  border-color: var(--brand-border) !important;
+}
+
+.sidebar-modern .nav-link {
+  color: #111827;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 12px;
+}
+
+.sidebar-modern .nav-link:hover,
+.sidebar-modern a.active,
+.sidebar-modern a:focus {
+  background-color: var(--brand-bg);
+  border-left: 4px solid var(--brand-primary);
+}
+
+.sidebar-modern .nav-link p {
+  margin: 0;
+}
+
+/* Buttons */
+.btn-primary {
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-primary-600));
+  border-color: var(--brand-primary-600);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--brand-primary-600), var(--brand-primary));
+  border-color: var(--brand-primary);
+}
+
+/* Cards */
+.card {
+  border-color: var(--brand-border);
+}
+
+/* Headers / header partial */
+.container.bg-light {
+  background-color: #f8fafc !important;
+}
+
+/* ===== Create Product page beautification ===== */
+#createProductPage h3 {
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+#createProductPage .form-group label {
+  font-weight: 600;
+  color: #374151;
+}
+
+#createProductPage .form-control {
+  border-radius: 10px;
+  border-color: var(--brand-border);
+}
+
+#createProductPage .form-control:focus {
+  border-color: #93c5fd;
+  box-shadow: 0 0 0 0.2rem rgba(147,197,253,.25);
+}
+
+#createProductPage #selectedInventoriesContainer {
+  min-height: 96px;
+  background-color: #ffffff;
+  border: 1px dashed #d1d5db;
+}
+
+#createProductPage #selectedInventoriesContainer .border {
+  border-color: #e5e7eb !important;
+}
+
+#createProductPage #inventorySearch {
+  border-radius: 9999px;
+  padding-left: 16px;
+}
+
+#createProductPage #searchResults {
+  background-color: #ffffff;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+#createProductPage #searchResults > div {
+  transition: background-color .12s ease;
+}
+
+#createProductPage #searchResults > div:hover {
+  background-color: #f8fafc;
+}
+
+#createProductPage table.table {
+  border: 1px solid var(--brand-border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+#createProductPage table.table thead th {
+  background-color: #f8fafc;
+  font-weight: 600;
+}
+
+#createProductPage table.table tbody tr {
+  transition: background-color .12s ease;
+}
+
+#createProductPage table.table tbody tr:hover {
+  background-color: #f9fbff;
+}
+
+#createProductPage .inventory-qty {
+  max-width: 140px;
+}
+
+#createProductPage .btn-outline-primary {
+  border-color: #93c5fd;
+  color: #1d4ed8;
+}
+
+#createProductPage .btn-outline-primary:hover {
+  background-color: #eff6ff;
+}
+
+#createProductPage .btn-success {
+  background: linear-gradient(135deg, #10b981, #059669);
+  border: none;
+}

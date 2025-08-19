@@ -1,0 +1,36 @@
+﻿@using RestroManagement.ML
+@model List<InventoryPredictionResponse>?
+@{
+    ViewData["Title"] = "Home Page";
+    var predictedInventoryDemands = ViewBag.PredictedInventoryDemands;
+   
+}
+
+<h2>Welcome to the Restro Management System!</h2>
+
+<a class="btn btn-primary" asp-action="Predict" asp-controller="Home">Predict Inventory Demand</a>
+
+@if(predictedInventoryDemands != null)
+{
+    
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Inventory Name</th>
+                <th>Predicted Demand</th>
+                <th>Demand Level</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in predictedInventoryDemands)
+            {
+                <tr>
+                    <td>@item.Inventory.Name</td>
+                    <td>@item.PredictedInventoryUsed</td>
+                    <td>@item.Demand</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

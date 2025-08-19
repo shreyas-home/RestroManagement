@@ -1,0 +1,42 @@
+﻿@using RestroManagement.Models.Domain
+@model Inventory
+@{
+    ViewData["Title"] = "Edit Inventory";
+}
+<h1>Edit Inventory</h1>
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group" >
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+
+                <label asp-for="Quantity" class="control-label"></label>
+                <input asp-for="Quantity" class="form-control" />
+                <span asp-validation-for="Quantity" class="text-danger"></span>
+
+                <label asp-for="BuyingPrice" class="control-label"></label>
+                <input asp-for="BuyingPrice" class="form-control" />
+                <span asp-validation-for="BuyingPrice" class="text-danger"></span>
+
+                <label asp-for="ThresholdValue" class="control-label">Threshold Value</label>
+                <input asp-for="ThresholdValue" class="form-control" />
+                <span asp-validation-for="ThresholdValue" class="text-danger"></span>
+
+                <label asp-for="Unit" class="control-label"></label>
+                <input asp-for="Unit" class="form-control" />
+                <span asp-validation-for="Unit" class="text-danger"></span>
+
+                <label asp-for="ExpiryDate" class="control-label">Expiry Date</label>
+                <input asp-for="ExpiryDate" class="form-control" />
+                <span asp-validation-for="ExpiryDate" class="text-danger"></span>
+
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Edit" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>

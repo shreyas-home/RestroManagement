@@ -1,0 +1,408 @@
+﻿@using RestroManagement.Models.ViewModels
+@using System.Text.Json
+@model CreateProductViewModel
+
+@{
+    ViewData["Title"] = "Create Product";
+}
+
+<style>
+    /* Page-scoped styles for Create Product only */
+    #createProductPage .form-col {
+        background-color: #ffffff;
+        border: 1px solid #edf2f7;
+        border-radius: 14px;
+        padding: 16px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        margin-bottom: 16px;
+    }
+
+    #createProductPage .inventory-table {
+        width: 100%;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        overflow: hidden;
+        background-color: #ffffff;
+    }
+
+    #createProductPage .inventory-table thead th {
+        background: linear-gradient(180deg, #f8fafc, #eef2f7);
+        font-weight: 600;
+        color: #374151;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    #createProductPage .inventory-table tbody tr {
+        transition: background-color .12s ease;
+    }
+
+    #createProductPage .inventory-table tbody tr:hover {
+        background-color: #f9fbff;
+    }
+
+    /* Highlight selected rows */
+    #createProductPage .inventory-table tbody tr:has(input.inventory-select:checked) {
+        background-color: var(--brand-selected-bg);
+    }
+
+    #createProductPage .inventory-table td,
+    #createProductPage .inventory-table th {
+        vertical-align: middle;
+    }
+
+    #createProductPage .inventory-table .form-check-input {
+        transform: scale(1.1);
+        cursor: pointer;
+    }
+
+    #createProductPage .inventory-table .inventory-qty {
+        max-width: 140px;
+    }
+
+    /* Spacing for headings and sections */
+    #createProductPage h3 { font-weight: 700; }
+    #createProductPage h4 { font-weight: 600; margin-top: 8px; }
+    #createProductPage h5 { font-weight: 600; }
+</style>
+<a asp-action="Index" class="btn btn-secondary mb-3">Back to Product List</a>
+
+<div id="createProductPage" class="container rounded-3 border-0 shadow-sm">
+    <h3>Create New Product</h3>
+    <form asp-action="Create" method="post">
+        <div class="row">
+            <div class="col border-0 shadow-sm rounded-3 form-col mr-2">
+                
+                <div class="form-group">
+                    <label asp-for="Name"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Description"></label>
+                    <textarea asp-for="Description" class="form-control"></textarea>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Price"></label>
+                    <input asp-for="Price" class="form-control" />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="CategoryId">Category</label>
+                    <select asp-for="CategoryId" class="form-control" asp-items="Model.Categories">
+                        <option value="">-- Select Category --</option>
+                    </select>
+                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                </div>
+
+                <h5>Selected Inventories</h5>
+                <div id="selectedInventoriesContainer" class="p-3 border rounded bg-white min-vh-25">
+                   
+                </div>
+            </div>
+            
+            <div class="col border-0 shadow-sm rounded-3 form-col">
+                <div class="mb-3">
+                    <label for="inventorySearch" class="form-label">Search and Add Inventories</label>
+                    <div class="input-group">
+                        <input type="text" id="inventorySearch" class="form-control" placeholder="Type name to search...">
+                    </div>
+                    <div id="searchResults" class="mt-2 border rounded" style="max-height: 200px; overflow-y: auto; display:none;">
+                        <!-- Client-side search results will be built here by JavaScript -->
+                    </div>
+                </div>
+
+                <h4>Assign Inventory Items</h4>
+                <table class="table table-hover align-middle inventory-table">
+                    <thead>
+                        <tr>
+                            <th>Select</th>
+                            <th>Inventory Item</th>
+                            <th>Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.InventorySelections.Count; i++)
+                        {
+                            <tr data-inventory-id="@Model.InventorySelections[i].InventoryItemId">
+                                <td>
+                                    <input type="checkbox" class="form-check-input inventory-select" data-inventory-id="@Model.InventorySelections[i].InventoryItemId" asp-for="InventorySelections[@i].Selected" />
+                                    <input type="hidden" asp-for="InventorySelections[@i].InventoryItemId" />
+                                    <input type="hidden" asp-for="InventorySelections[@i].InventoryItemName" />
+                                </td>
+                                <td>@Model.InventorySelections[i].InventoryItemName</td>
+                                <td>
+                                    <input asp-for="InventorySelections[@i].Quantity" class="form-control inventory-qty" data-inventory-id="@Model.InventorySelections[i].InventoryItemId" />
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+            
+        </div>
+        <button type="submit" class="btn btn-primary m-1 p-1">Create</button>
+        <button type="reset" class="btn btn-outline-secondary m-1 p-1">Cancel</button>
+    </form>
+</div>
+
+
+
+@* <form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Price"></label>
+        <input asp-for="Price" class="form-control" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CategoryId">Category</label>
+        <select asp-for="CategoryId" class="form-control" asp-items="Model.Categories">
+            <option value="">-- Select Category --</option>
+        </select>
+        <span asp-validation-for="CategoryId" class="text-danger"></span>
+    </div>
+
+    <h4>Assign Inventory Items</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Select</th>
+                <th>Inventory Item</th>
+                <th>Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.InventorySelections.Count; i++)
+            {
+                <tr>
+                    <td>
+                        <input type="checkbox" asp-for="InventorySelections[@i].Selected" />
+                        <input type="hidden" asp-for="InventorySelections[@i].InventoryItemId" />
+                        <input type="hidden" asp-for="InventorySelections[@i].InventoryItemName" />
+                    </td>
+                    <td>@Model.InventorySelections[i].InventoryItemName</td>
+                    <td>
+                        <input asp-for="InventorySelections[@i].Quantity" class="form-control" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>
+ *@
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (function(){
+            const inventoryData = @Html.Raw(JsonSerializer.Serialize(Model.InventorySelections.Select(s => new { id = s.InventoryItemId, name = s.InventoryItemName })));
+
+            const searchInput = document.getElementById('inventorySearch');
+            const resultsBox = document.getElementById('searchResults');
+            const selectedContainer = document.getElementById('selectedInventoriesContainer');
+
+            function isSelected(id){
+                const checkbox = document.querySelector('input.inventory-select[data-inventory-id="'+id+'"]');
+                return checkbox ? checkbox.checked : false;
+            }
+
+            function setSelected(id, selected){
+                const checkbox = document.querySelector('input.inventory-select[data-inventory-id="'+id+'"]');
+                if(checkbox){
+                    checkbox.checked = !!selected;
+                }
+            }
+
+            function getQtyInput(id){
+                return document.querySelector('input.inventory-qty[data-inventory-id="'+id+'"]');
+            }
+
+            function ensureQuantityAtLeastOne(id){
+                const qtyInput = getQtyInput(id);
+                if(qtyInput){
+                    const val = parseInt(qtyInput.value || '0', 10);
+                    if(isNaN(val) || val <= 0){
+                        qtyInput.value = '1';
+                    }
+                }
+            }
+
+            function removeSelectedCard(id){
+                const card = selectedContainer.querySelector('[data-selected-id="'+id+'"]');
+                if(card){
+                    card.remove();
+                }
+            }
+
+            function reorderTableRows(){
+                const tbody = document.querySelector('table.table tbody');
+                if(!tbody) return;
+                const rows = Array.from(tbody.querySelectorAll('tr')).map((row, idx) => ({
+                    row: row,
+                    idx: idx,
+                    selected: !!row.querySelector('input.inventory-select')?.checked
+                }));
+                rows.sort((a, b) => {
+                    if (a.selected !== b.selected) return a.selected ? -1 : 1; // selected first
+                    return a.idx - b.idx; // keep original order otherwise
+                });
+                rows.forEach(r => tbody.appendChild(r.row));
+            }
+
+            function renderSelectedCard(item){
+                // If exists, update and return
+                let card = selectedContainer.querySelector('[data-selected-id="'+item.id+'"]');
+                const qtyInput = getQtyInput(item.id);
+                const qtyVal = qtyInput ? (qtyInput.value || '') : '';
+                if(card){
+                    const qtySpan = card.querySelector('[data-role="qty"]');
+                    if(qtySpan) qtySpan.textContent = qtyVal;
+                    return;
+                }
+                card = document.createElement('div');
+                card.className = 'd-flex align-items-center justify-content-between border rounded p-2 mb-2';
+                card.setAttribute('data-selected-id', item.id);
+                card.innerHTML = '<div><strong>'+item.name+'</strong><div class="small text-muted">Qty: <span data-role="qty">'+(qtyVal || '1')+'</span></div></div>'+
+                                 '<div class="d-flex gap-2">'+
+                                    '<button type="button" class="btn btn-sm btn-outline-secondary" data-action="focus">Set Qty</button>'+
+                                    '<button type="button" class="btn btn-sm btn-outline-danger" data-action="remove">Remove</button>'+
+                                 '</div>';
+                card.addEventListener('click', function(e){
+                    const action = e.target && e.target.getAttribute('data-action');
+                    if(action === 'remove'){
+                        setSelected(item.id, false);
+                        if(qtyInput){ qtyInput.value = '0'; }
+                        removeSelectedCard(item.id);
+                        refreshResultsButtons();
+                        reorderTableRows();
+                    } else if(action === 'focus'){
+                        if(qtyInput){ qtyInput.focus(); qtyInput.select(); }
+                    }
+                });
+                selectedContainer.appendChild(card);
+            }
+
+            function addInventory(id){
+                const item = inventoryData.find(x => x.id === id);
+                if(!item) return;
+                setSelected(id, true);
+                ensureQuantityAtLeastOne(id);
+                renderSelectedCard(item);
+                refreshResultsButtons();
+                reorderTableRows();
+            }
+
+            function refreshResultsButtons(){
+                if(!resultsBox) return;
+                resultsBox.querySelectorAll('[data-id]').forEach(el => {
+                    const id = parseInt(el.getAttribute('data-id'), 10);
+                    const btn = el.querySelector('button[data-role="add"]');
+                    if(btn){
+                        if(isSelected(id)){
+                            btn.disabled = true;
+                            btn.textContent = 'Added';
+                            btn.classList.remove('btn-outline-primary');
+                            btn.classList.add('btn-success');
+                        } else {
+                            btn.disabled = false;
+                            btn.textContent = 'Add';
+                            btn.classList.add('btn-outline-primary');
+                            btn.classList.remove('btn-success');
+                        }
+                    }
+                });
+            }
+
+            function renderResults(items){
+                if(items.length === 0){
+                    resultsBox.style.display = 'none';
+                    resultsBox.innerHTML = '';
+                    return;
+                }
+                resultsBox.style.display = 'block';
+                resultsBox.innerHTML = '';
+                items.slice(0, 25).forEach(it => {
+                    const row = document.createElement('div');
+                    row.className = 'd-flex justify-content-between align-items-center p-2 border-bottom';
+                    row.setAttribute('data-id', it.id);
+                    row.innerHTML = '<div>'+it.name+'</div>'+
+                                    '<div><button type="button" class="btn btn-sm btn-outline-primary" data-role="add">Add</button></div>';
+                    row.addEventListener('click', function(e){
+                        const role = e.target && e.target.getAttribute('data-role');
+                        if(role === 'add'){
+                            addInventory(it.id);
+                        }
+                    });
+                    resultsBox.appendChild(row);
+                });
+                refreshResultsButtons();
+            }
+
+            function filter(query){
+                const q = (query || '').trim().toLowerCase();
+                if(q === ''){ renderResults([]); return; }
+                const filtered = inventoryData.filter(it => (it.name || '').toLowerCase().includes(q));
+                renderResults(filtered);
+            }
+
+            // Sync selected chips on quantity change
+            document.querySelectorAll('input.inventory-qty').forEach(inp => {
+                inp.addEventListener('input', function(){
+                    const id = parseInt(this.getAttribute('data-inventory-id'), 10);
+                    const item = inventoryData.find(x => x.id === id);
+                    if(!item) return;
+                    const card = selectedContainer.querySelector('[data-selected-id="'+id+'"]');
+                    if(card){
+                        const qtySpan = card.querySelector('[data-role="qty"]');
+                        if(qtySpan) qtySpan.textContent = this.value || '';
+                    }
+                });
+            });
+
+            // React when user manually toggles checkbox in table
+            document.querySelectorAll('input.inventory-select').forEach(cb => {
+                cb.addEventListener('change', function(){
+                    const id = parseInt(this.getAttribute('data-inventory-id'), 10);
+                    const item = inventoryData.find(x => x.id === id);
+                    if(!item) return;
+                    if(this.checked){
+                        ensureQuantityAtLeastOne(id);
+                        renderSelectedCard(item);
+                    } else {
+                        removeSelectedCard(id);
+                        const qtyInput = getQtyInput(id);
+                        if(qtyInput){ qtyInput.value = '0'; }
+                    }
+                    refreshResultsButtons();
+                    reorderTableRows();
+                });
+            });
+
+            // Bootstrap initial state (if any pre-checked)
+            inventoryData.forEach(it => {
+                if(isSelected(it.id)){
+                    ensureQuantityAtLeastOne(it.id);
+                    renderSelectedCard(it);
+                }
+            });
+            reorderTableRows();
+
+            if(searchInput){
+                searchInput.addEventListener('input', function(){ filter(this.value); });
+            }
+        })();
+    </script>
+}

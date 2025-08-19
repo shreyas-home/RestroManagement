@@ -1,0 +1,141 @@
+﻿@using RestroManagement.Models.Domain
+@model IEnumerable<Order>
+@{
+    ViewData["Title"] = "Orders";
+    ViewData["BodyClass"] = "theme-modern orders-theme";
+}
+
+<div class="row g-3 m-2 align-items-stretch orders-metrics-row">
+    <div class="col-12 col-sm-6 col-lg-3 d-flex">
+        <div class="card rounded-4 border-0 shadow-lg metric-card orders-metric h-100">
+            <div class="card-body d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="card-subtitle text-muted mb-1">Total Orders</h6>
+                    <div class="metric-value">@ViewBag.TotalOrders</div>
+                </div>
+                <div class="metric-icon bg-primary text-white d-flex align-items-center justify-content-center">
+                    <i class="bi bi-receipt"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-lg-3 d-flex">
+        <div class="card rounded-4 border-0 shadow-lg metric-card orders-metric h-100">
+            <div class="card-body d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="card-subtitle text-muted mb-1">Today's Orders</h6>
+                    <div class="metric-value">@ViewBag.TodaysOrders</div>
+                </div>
+                <div class="metric-icon bg-info text-white d-flex align-items-center justify-content-center">
+                    <i class="bi bi-calendar-check"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-lg-3 d-flex">
+        <div class="card rounded-4 border-0 shadow-lg metric-card orders-metric h-100">
+            <div class="card-body d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="card-subtitle text-muted mb-1">Total Sales</h6>
+                    <div class="metric-value">@ViewBag.TotalSales</div>
+                </div>
+                <div class="metric-icon bg-success text-white d-flex align-items-center justify-content-center">
+                    <i class="bi bi-cash-coin"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-lg-3 d-flex">
+        <div class="card rounded-4 border-0 shadow-lg metric-card orders-metric h-100">
+            <div class="card-body d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="card-subtitle text-muted mb-1">Today's Sales</h6>
+                    <div class="metric-value">@ViewBag.TodaysSales</div>
+                </div>
+                <div class="metric-icon bg-warning text-white d-flex align-items-center justify-content-center">
+                    <i class="bi bi-graph-up"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<h3 class="mt-2">Order List</h3>
+
+
+@{
+    var page = (int)(ViewBag.CurrentPage ?? 1);
+    var pageSize = 10;
+    var totalOrders = (int)(ViewBag.TotalOrders ?? 0);
+    var start = totalOrders == 0 ? 0 : ((page - 1) * pageSize) + 1;
+    var end = Math.Min(page * pageSize, totalOrders);
+}
+
+@if (Model != null && Model.Any())
+{
+    <div class="accordion rounded shadow-lg m-1" id="accordionFlush">
+        @foreach (var order in Model)
+        {
+            var id = $"flush{order.Id}";
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#@id" aria-expanded="false" aria-controls="@id">
+                        <span class="me-2 badge bg-primary">#@order.Id</span>
+                        <span class="me-3"><i class="bi bi-calendar-event"></i> @order.OrderDate.ToString("MM/dd/yyyy")</span>
+                        <span class="ms-auto fw-semibold"> @order.TotalAmount.ToString("C")</span>
+                        <span class="ms-3 badge bg-secondary">@order.OrderItems.Count item(s)</span>
+                    </button>
+                </h2>
+                <div id="@id" class="accordion-collapse collapse" data-bs-parent="#accordionFlush">
+                    <div class="accordion-body bg-light">
+                        <div class="table-responsive">
+                            <table class="table table-sm table-striped align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th style="width: 120px;">Qty</th>
+                                        <th style="width: 160px;">Price</th>
+                                        <th style="width: 160px;">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                @foreach(var item in order.OrderItems)
+                                {
+                                    <tr>
+                                        <td>@(item.Product?.Name ?? "N/A")</td>
+                                        <td>@item.Quantity</td>
+                                        <td>@item.Price.ToString("C")</td>
+                                        <td>@((item.Quantity * item.Price).ToString("C"))</td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-info m-2">No orders found.</div>
+}
+
+<nav aria-label="Orders pagination" class="mt-3 d-flex align-items-center justify-content-between">
+    <span class="text-muted">Showing @start–@end of @totalOrders orders</span>
+    <ul class="pagination">
+        <li class="page-item @(ViewBag.CurrentPage > 1 ? "" : "disabled")">
+            <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage - 1)">Previous</a>
+        </li>
+        @for (int i = 1; i <= (int)ViewBag.TotalPages; i++)
+        {
+            <li class="page-item @(i == (int)ViewBag.CurrentPage ? "active" : "")">
+                <a class="page-link" asp-action="Index" asp-route-page="@i">@i</a>
+            </li>
+        }
+        <li class="page-item @(ViewBag.CurrentPage < ViewBag.TotalPages ? "" : "disabled")">
+            <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage + 1)">Next</a>
+        </li>
+    </ul>
+</nav>

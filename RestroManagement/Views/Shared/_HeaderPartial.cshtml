@@ -1,0 +1,27 @@
+﻿@{
+    var currentDate = DateTime.Now;
+}
+<div class="container rounded-3 mt-2 mb-2 p-3 shadow-lg bg-light">
+    <div style="display: flex; justify-content: flex-end; align-items: center; gap: 8px;">
+            <strong>Date:</strong> <span id="current-date"></span> &nbsp; | &nbsp;
+            <strong>Time:</strong> <span id="current-time"></span>
+
+    </div>
+    
+</div>
+
+<script>
+    function updateDateTime() {
+        const now = new Date();
+        document.getElementById('current-date').textContent = now.toLocaleDateString(undefined, {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+        document.getElementById('current-time').textContent = now.toLocaleTimeString();
+    }
+
+    updateDateTime(); // initial call
+    setInterval(updateDateTime, 1000); // update every second
+</script>
