@@ -9,18 +9,27 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/RestroManagement.styles.css" asp-append-version="true" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .sidebar a:hover {
+            background-color: #F8B259;
+            box-shadow: 0 0 10px black;
+        }
 
+        .activePage {
+            background-color: #D96F32 !important;
+            color: #F3E9DC !important;
+        }
+    </style>
 </head>
 @{
     var bodyClass = (ViewData["BodyClass"] as string) ?? "theme-modern";
 }
-<style>
-    .sidebar a.active, .sidebar a:hover {
-        background-color: #e8f0fe;
-        border-left: 4px solid #007bff;
-    }
-</style>
+
+
 <body class="@bodyClass">
+    <header>
+        <partial name="_HeaderPartial" />
+    </header>
   @*   <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
@@ -73,41 +82,45 @@
 
                 
 
-                <ul class="nav nav-pills nav-fill flex-column h-100 p-1 mb-auto gap-2 ">
+                <ul class="nav nav-pills nav-fill flex-column h-100 p-1 mb-1">
 
-                    <li class="nav-item m-1 p-0 mb-2 border rounded-3 shadow-sm bg-light">
+                   @*  <li class="nav-item m-1 p-0 mb-2 border rounded-3 shadow-sm bg-light">
                         <a class="nav-link text-dark gap-2 fw-semibold shadow-sm border rounded ">
                             <img src="~/images/DineFlow.png" alt="DineFlow" class="img-fluid" style="max-height: 42px; width: auto; display: block; margin: 4px auto;" />
                         </a>
-                    </li>
+                    </li> *@
 
                     
 
-                    <li class="nav-item m-1 p-0 mb-2 border-0 shadow-sm">
-                        <a class="nav-link text-dark gap-2 fw-semibold shadow-sm border rounded" asp-area="" asp-controller="Home" asp-action="Index">
+                    <li class="nav-item m-1 p-0 border-0 shadow-sm">
+                        <a class="nav-link text-dark fw-semibold shadow-sm border rounded 
+                            @(ViewBag.ActivePage == "Home" ? "activePage" : "")" asp-area="" asp-controller="Home" asp-action="Index">
                             <i class="bi bi-house-door-fill h2 mb-0"></i><p>Home</p>
                         </a>
                         
                        
                     </li>
 
-                    <li class="nav-item mb-2 m-1 p-0 border-0 shadow-sm">
-                        <a class="nav-link text-dark border rounded p-3 gap-2 fw-semibold shadow-sm" asp-area="" asp-controller="Menu" asp-action="Index">
+                    <li class="nav-item m-1 p-0 border-0 shadow-sm">
+                        <a class="nav-link text-dark border rounded p-3 fw-semibold shadow-sm 
+                        @(ViewBag.ActivePage == "Menu" ? "activePage" : "")" asp-area="" asp-controller="Menu" asp-action="Index">
                             <i class="bi bi-grid-3x3-gap-fill h2 mb-0"></i>
                             <p>Menu</p>
                         </a>
 
                     </li>
 
-                    <li class="nav-item mb-2 m-1 p-0 border-0 shadow-sm">
-                        <a class="nav-link text-dark border rounded p-3 gap-2 fw-semibold shadow-sm" asp-area="" asp-controller="Product" asp-action="Index">
+                    <li class="nav-item m-1 p-0 border-0 shadow-sm">
+                        <a class="nav-link text-dark border rounded p-3 fw-semibold shadow-sm 
+                        @(ViewBag.ActivePage == "Products" ? "activePage" : "")" asp-area="" asp-controller="Product" asp-action="Index">
                             <i class="bi bi-menu-down h2"></i>
                             <p>Products</p>
                         </a>
                     </li>
 
-                    <li class="nav-item m-1 p-0 mb-2 border-0 shadow-sm">
-                        <a class="nav-link text-dark border rounded p-3 gap-2 fw-semibold shadow-sm" asp-area="" asp-controller="Inventory" asp-action="Index">
+                    <li class="nav-item m-1 p-0 border-0 shadow-sm">
+                        <a class="nav-link text-dark border rounded p-3 fw-semibold shadow-sm 
+                        @(ViewBag.ActivePage == "Inventory" ? "activePage" : "")" asp-area="" asp-controller="Inventory" asp-action="Index">
                             <i class="bi bi-minecart-loaded h2"></i>
                             <p>Inventory</p>
                         </a>
@@ -117,15 +130,17 @@
                    
                    
 
-                    <li class="nav-item mb-2 m-1 p-0 border-0 shadow-sm">
-                        <a class="nav-link text-dark border rounded p-3 gap-2 fw-semibold shadow-sm" asp-area="" asp-controller="Order" asp-action="Index">
+                    <li class="nav-item m-1 p-0 border-0 shadow-sm">
+                        <a class="nav-link text-dark border rounded p-3 fw-semibold shadow-sm 
+                        @(ViewBag.ActivePage == "Orders" ? "activePage" : "")" asp-area="" asp-controller="Order" asp-action="Index">
                             <i class="bi bi-people-fill h2"></i>
                             <p>Orders</p>
                         </a>
                     </li>
 
-                    <li class="nav-item mb-2 m-1 p-0 border-0 shadow-lg">
-                        <a class="nav-link text-dark border rounded p-3 gap-2 fw-semibold shadow-sm" asp-area="" asp-controller="Manage" asp-action="Index">
+                    <li class="nav-item m-1 p-0 border-0 shadow-lg">
+                        <a class="nav-link text-dark border rounded p-3 fw-semibold shadow-sm 
+                        @(ViewBag.ActivePage == "Manage" ? "activePage" : "")" asp-area="" asp-controller="Manage" asp-action="Index">
                             <i class="bi bi-gear h2"></i>
                             <p>Manage</p>
                         </a>
@@ -141,7 +156,6 @@
 
     <div class="container-fluid">
         <main role="main">
-                <partial name="_HeaderPartial" />
             @RenderBody()
         </main>
     </div>

@@ -1,7 +1,8 @@
 ﻿@using RestroManagement.Models.ViewModels
 @model MenuViewModel
 @{
-    ViewBag.Title = "Veg Menu";
+    ViewBag.ActivePage = "Menu";
+    ViewBag.Title = "Menu";
     var firstCategory = (Model.Categories ?? new List<RestroManagement.Models.Domain.Category>()).FirstOrDefault();
     ViewData["BodyClass"] = "theme-modern menu-theme";
 }

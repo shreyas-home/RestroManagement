@@ -1,6 +1,7 @@
 ﻿@using RestroManagement.ML
 @model List<InventoryPredictionResponse>?
 @{
+    ViewBag.ActivePage = "Home";
     ViewData["Title"] = "Home Page";
     var predictedInventoryDemands = ViewBag.PredictedInventoryDemands;
    

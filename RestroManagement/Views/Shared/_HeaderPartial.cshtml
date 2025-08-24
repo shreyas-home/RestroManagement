@@ -1,11 +1,15 @@
 ﻿@{
     var currentDate = DateTime.Now;
 }
-<div class="container rounded-3 mt-2 mb-2 p-3 shadow-lg bg-light">
-    <div style="display: flex; justify-content: flex-end; align-items: center; gap: 8px;">
+<div class="container-fluid m-2 p-2 shadow-lg text-white" 
+    style="border-radius:10px;background-color:#D96F32;">
+    
+    <div class="d-flex justify-content-between" style="align-items: center; gap: 8px;">
+        <h4><b>RestroManagement</b></h4>
+        <div>
             <strong>Date:</strong> <span id="current-date"></span> &nbsp; | &nbsp;
             <strong>Time:</strong> <span id="current-time"></span>
-
+        </div>
     </div>
     
 </div>
